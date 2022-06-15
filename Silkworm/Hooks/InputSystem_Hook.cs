@@ -13,24 +13,6 @@ namespace Silkworm.Hooks;
 [HarmonyPatch]
 internal static class InputSystem_Hook
 {
-    private unsafe delegate bool TryGetInputFlagLocalization(IntPtr _this, InputFlag inputFlag, LocalizationKey* locKey);
-    private static TryGetInputFlagLocalization TryGetInputFlagLocalization_Original;
-    private static FastNativeDetour TryGetInputFlagLocalization_Detour;
-
-    internal static void CreateAndApply()
-    {
-        unsafe
-        {
-            TryGetInputFlagLocalization_Detour = DetourUtils.Create(typeof(InputSystem), "TryGetInputFlagLocalization", TryGetInputFlagLocalization_Hook, out TryGetInputFlagLocalization_Original);
-        }
-    }
-
-    internal static void Dispose()
-    {
-        if (TryGetInputFlagLocalization_Detour != null)
-            TryGetInputFlagLocalization_Detour.Dispose();
-    }
-
     [HarmonyPrefix]
     [HarmonyPatch(typeof(InputSystem), nameof(InputSystem.GetKeyInputMap))]
     private static bool GetKeyInputMap(InputSystem __instance, InputFlag input, ref string inputText, ref Sprite inputIcon, bool primary)
@@ -87,18 +69,5 @@ internal static class InputSystem_Hook
                     keybinding.OnKeyUp?.Invoke();
             }
         }
-    }
-
-    private static unsafe bool TryGetInputFlagLocalization_Hook(IntPtr _this, InputFlag inputFlag, LocalizationKey* locKey)
-    {
-        var keybinding = KeybindingsManager.GetKeybinding(inputFlag);
-
-        if (keybinding != null)
-        {
-            *locKey = keybinding.NameKey;
-            return true;
-        }
-
-        return TryGetInputFlagLocalization_Original(_this, inputFlag, locKey);
     }
 }

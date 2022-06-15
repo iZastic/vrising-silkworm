@@ -47,10 +47,10 @@ internal static class OptionsPanel_Interface_Hook
                         OnChange(sliderOption),
                         (Il2CppSystem.Func<float, float>)(value =>
                         {
-                            if (sliderOption.Value < 0)
-                            {
+                            if (sliderOption.Value < 10)
+                                return Mathf.Round(sliderOption.Value * 10f) / 10f;
+                            else if (sliderOption.Value < 0)
                                 return Mathf.Round(sliderOption.Value * 100f) / 100f;
-                            }
                             return Mathf.Round(sliderOption.Value);
                         })
                     );

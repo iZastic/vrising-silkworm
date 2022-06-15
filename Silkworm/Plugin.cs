@@ -24,8 +24,6 @@ public class Plugin : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<Silkworm>();
         AddComponent<Silkworm>();
 
-        InputSystem_Hook.CreateAndApply();
-
         harmony = new Harmony(PluginInfo.PLUGIN_GUID);
         harmony.PatchAll();
 
@@ -39,8 +37,6 @@ public class Plugin : BasePlugin
     {
         OptionsManager.Save();
         KeybindingsManager.Save();
-
-        InputSystem_Hook.Dispose();
 
         return true;
     }

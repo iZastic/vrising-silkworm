@@ -24,6 +24,18 @@ internal class Options_ControlsPanel_Hook
         }
     }
 
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Options_ControlsPanel), nameof(Options_ControlsPanel.Update))]
+    private static void Update(Options_ControlsPanel __instance)
+    {
+        foreach (var entry in __instance._Entries)
+        {
+            var keybinding = KeybindingsManager.GetKeybinding(entry._InputFlag);
+            if (keybinding != null)
+                entry.SetInputName(keybinding.NameKey);
+        }
+    }
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Options_ControlsPanel), nameof(Options_ControlsPanel.OnResetButtonClicked))]
     private static void OnResetButtonClicked()
