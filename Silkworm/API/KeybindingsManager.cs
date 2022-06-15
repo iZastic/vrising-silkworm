@@ -77,6 +77,9 @@ public static class KeybindingsManager
 
     internal static void Load()
     {
+        if (!FileUtils.Exists(KeybindingFilename))
+            Save();
+
         var categories = FileUtils.ReadJson<Dictionary<string, KeybindingCategory>>(KeybindingFilename);
 
         if (categories != null)

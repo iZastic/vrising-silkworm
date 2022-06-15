@@ -95,6 +95,9 @@ public static class OptionsManager
 
     internal static void Load()
     {
+        if (!FileUtils.Exists(OptionsFilename))
+            Save();
+
         var categories = FileUtils.ReadJson<Dictionary<string, OptionCategory>>(OptionsFilename);
         if (categories != null)
             Categories = categories;

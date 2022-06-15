@@ -41,10 +41,9 @@ public static class FileUtils
             var deserialized = JsonSerializer.Deserialize<T>(content, jsonSerializerOptions);
             return deserialized;
         }
-        catch (Exception ex)
+        catch
         {
             Plugin.Logger.LogWarning($"Error reading {filename}");
-            Plugin.Logger.LogError(ex);
             return default;
         }
     }
