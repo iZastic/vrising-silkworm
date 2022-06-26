@@ -49,6 +49,6 @@ internal class Options_ControlsPanel_Hook
             }
         }
 
-        KeybindingsManager.Save();
+        KeybindingsManager.FullSave();
     }
 }

@@ -7,6 +7,8 @@ using StunShared.UI;
 using UnityEngine;
 using UnityEngine.Events;
 using System.Linq;
+using UnityEngine.UI;
+using TMPro;
 
 namespace Silkworm.Hooks;
 
@@ -69,16 +71,52 @@ internal static class OptionsPanel_Interface_Hook
                     );
                     dropdownOption.AddListener(value => dropdown.Dropdown.value = value);
                 }
+                else if (category.TryGetDivider(id, out var dividerText))
+                {
+                    var divider = CreateDivider(__instance.ContentNode, dividerText);
+                }
             }
         }
+    }
+
+    private static GameObject CreateDivider(Transform parent, string text)
+    {
+        var textComps = parent.GetComponentsInChildren<TextMeshProUGUI>();
+        var divider = new GameObject("Divider");
+
+        var dividerTransform = divider.AddComponent<RectTransform>();
+        dividerTransform.SetParent(parent);
+        dividerTransform.localScale = Vector3.one;
+        dividerTransform.sizeDelta = new Vector2(0, 28);
+
+        var dividerImage = divider.AddComponent<Image>();
+        dividerImage.color = new Color(0.12f, 0.152f, 0.2f, 0.15f);
+
+        var dividerLayout = divider.AddComponent<LayoutElement>();
+        dividerLayout.preferredHeight = 28;
+
+        var dividerTextObject = new GameObject("Text");
+        var dividerTextTransform = dividerTextObject.AddComponent<RectTransform>();
+        dividerTextTransform.SetParent(divider.transform);
+        dividerTextTransform.localScale = Vector3.one;
+
+        var dividerText = dividerTextObject.AddComponent<TextMeshProUGUI>();
+        dividerText.alignment = TextAlignmentOptions.Center;
+        dividerText.fontStyle = FontStyles.SmallCaps;
+        dividerText.font = textComps[0].font;
+        dividerText.fontSize = 20;
+        if (text != null)
+            dividerText.SetText(text);
+
+        return divider;
     }
 
     private static UnityAction<T> OnChange<T>(Option<T> option)
     {
         return (UnityAction<T>)(value =>
         {
-            option.OnChange.Invoke(value);
-            OptionsManager.Save();
+            option.SetValue(value);
+            OptionsManager.FullSave();
         });
     }
 }

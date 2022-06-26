@@ -35,8 +35,8 @@ public class Plugin : BasePlugin
 
     public override bool Unload()
     {
-        OptionsManager.Save();
-        KeybindingsManager.Save();
+        OptionsManager.FullSave();
+        KeybindingsManager.FullSave();
 
         return true;
     }

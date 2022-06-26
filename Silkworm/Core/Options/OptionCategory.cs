@@ -19,6 +19,7 @@ public class OptionCategory
     internal Dictionary<string, ToggleOption> ToggleOptions = new();
     internal Dictionary<string, SliderOption> SliderOptions = new();
     internal Dictionary<string, DropdownOption> DropdownOptions = new();
+    internal Dictionary<string, string> Dividers = new();
 
     public OptionCategory(string name)
     {
@@ -47,7 +48,7 @@ public class OptionCategory
     {
         var option = new SliderOption(id, name, minValue, maxValue, defaultValue, format);
         if (Sliders.ContainsKey(id))
-            option.Value = Sliders[id];
+            option.Value = Mathf.Clamp(Sliders[id], minValue, maxValue);
 
         SliderOptions.Add(id, option);
         Options.Add(option.Id);
@@ -66,6 +67,18 @@ public class OptionCategory
         Options.Add(option.Id);
 
         return option;
+    }
+
+    public void AddDivider()
+    {
+        AddDivider(null);
+    }
+
+    public void AddDivider(string name)
+    {
+        string id = Guid.NewGuid().ToString();
+        Dividers.Add(id, name);
+        Options.Add(id);
     }
 
     public ToggleOption GetToggle(string id)
@@ -131,6 +144,18 @@ public class OptionCategory
         }
 
         option = DropdownOptions[id];
+        return true;
+    }
+
+    public bool TryGetDivider(string id, out string text)
+    {
+        if (!Dividers.ContainsKey(id))
+        {
+            text = null;
+            return false;
+        }
+
+        text = Dividers[id];
         return true;
     }
 }

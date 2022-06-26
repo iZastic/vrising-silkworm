@@ -54,7 +54,12 @@ public static class KeybindingsManager
         return default;
     }
 
-    internal static void Save()
+    public static void Save()
+    {
+        FileUtils.WriteJson(KeybindingFilename, Categories);
+    }
+
+    internal static void FullSave()
     {
         List<string> removeCategories = new();
         foreach (var category in Categories.Values)
@@ -72,7 +77,7 @@ public static class KeybindingsManager
         foreach (var name in removeCategories)
             Categories.Remove(name);
 
-        FileUtils.WriteJson(KeybindingFilename, Categories);
+        Save();
     }
 
     internal static void Load()

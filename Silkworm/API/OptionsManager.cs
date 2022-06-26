@@ -67,7 +67,12 @@ public static class OptionsManager
         return default;
     }
 
-    internal static void Save()
+    public static void Save()
+    {
+        FileUtils.WriteJson(OptionsFilename, Categories);
+    }
+
+    internal static void FullSave()
     {
         List<string> removeCategories = new();
         foreach (var category in Categories.Values)
@@ -90,7 +95,7 @@ public static class OptionsManager
         foreach (var name in removeCategories)
             Categories.Remove(name);
 
-        FileUtils.WriteJson(OptionsFilename, Categories);
+        Save();
     }
 
     internal static void Load()

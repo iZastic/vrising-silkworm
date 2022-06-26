@@ -22,8 +22,6 @@ public class Option<T>
         Value = defaultValue;
         DefaultValue = defaultValue;
         NameKey = LocalizationManager.CreateKey(name);
-
-        AddListener(value => Value = value);
     }
 
     public void SetValue(T value)

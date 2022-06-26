@@ -48,7 +48,7 @@ internal static class InputSystem_Hook
         else
             keybinding.Secondary = newKey;
 
-        KeybindingsManager.Save();
+        KeybindingsManager.FullSave();
 
         return false;
     }
