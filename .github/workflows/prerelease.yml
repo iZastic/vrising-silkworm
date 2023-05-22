@@ -32,5 +32,4 @@ jobs:
       with:
         body: Automated release of ${{ github.ref_name }}
         prerelease: true
-        generate_release_notes: true
         files: Silkworm/bin/Release/net6.0/Silkworm.dll
