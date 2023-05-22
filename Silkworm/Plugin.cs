@@ -1,12 +1,8 @@
 ﻿using BepInEx;
-using BepInEx.IL2CPP;
 using BepInEx.Logging;
+using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Silkworm.API;
-using Silkworm.Core.Options;
-using Silkworm.Hooks;
-using System;
-using UnhollowerRuntimeLib;
 
 namespace Silkworm;
 
@@ -20,9 +16,6 @@ public class Plugin : BasePlugin
     public override void Load()
     {
         Logger = Log;
-
-        ClassInjector.RegisterTypeInIl2Cpp<Silkworm>();
-        AddComponent<Silkworm>();
 
         harmony = new Harmony(PluginInfo.PLUGIN_GUID);
         harmony.PatchAll();

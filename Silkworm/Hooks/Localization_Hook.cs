@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using ProjectM;
 using Silkworm.API;
-using StunLocalization;
+using Stunlock.Localization;
 
 namespace Silkworm.Hooks;
 

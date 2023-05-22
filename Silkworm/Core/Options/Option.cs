@@ -1,5 +1,5 @@
 ﻿using Silkworm.API;
-using StunLocalization;
+using Stunlock.Localization;
 using System;
 using UnityEngine.Events;
 

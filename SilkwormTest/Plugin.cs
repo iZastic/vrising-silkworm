@@ -1,6 +1,6 @@
 ﻿using BepInEx;
-using BepInEx.IL2CPP;
 using BepInEx.Logging;
+using BepInEx.Unity.IL2CPP;
 using Silkworm.API;
 using System;
 

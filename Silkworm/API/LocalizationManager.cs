@@ -1,5 +1,6 @@
-﻿using ProjectM;
-using StunLocalization;
+﻿using Il2CppSystem;
+using ProjectM;
+using Stunlock.Localization;
 using System.Collections.Generic;
 
 namespace Silkworm.API;
@@ -35,7 +36,7 @@ public static class LocalizationManager
 
     public static LocalizationKey CreateKey(string value)
     {
-        var key = new LocalizationKey(AssetGuid.NewGuid());
+        var key = new LocalizationKey(AssetGuid.FromGuid(Guid.NewGuid()));
         guids.Add(key.GetGuid(), value);
         return key;
     }

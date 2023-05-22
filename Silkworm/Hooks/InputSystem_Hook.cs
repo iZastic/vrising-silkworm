@@ -1,10 +1,7 @@
-﻿using BepInEx.IL2CPP.Hook;
-using HarmonyLib;
+﻿using HarmonyLib;
 using ProjectM;
 using Silkworm.API;
-using Silkworm.Utils;
-using StunLocalization;
-using System;
+using Stunlock.Localization;
 using System.Linq;
 using UnityEngine;
 

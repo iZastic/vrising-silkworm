@@ -1,7 +1,7 @@
 ﻿using ProjectM;
 using Silkworm.API;
 using Silkworm.Utils;
-using StunLocalization;
+using Stunlock.Localization;
 using System;
 using UnityEngine;
 using UnityEngine.Events;

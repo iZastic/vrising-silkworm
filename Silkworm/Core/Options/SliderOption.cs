@@ -1,6 +1,4 @@
-﻿using StunLocalization;
-
-namespace Silkworm.Core.Options;
+﻿namespace Silkworm.Core.Options;
 
 public class SliderOption : Option<float>
 {
