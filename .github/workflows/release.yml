@@ -5,9 +5,16 @@ on:
     tags:
       - "v*.*.*"
 
+env:
+  SOLUTION_PATH: Silkworm.sln
+  PACKAGE_PATH: package
+  ZIP_PATH: package/Silkworm.zip
+
 jobs:
   build:
-    runs-on: windows-latest
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
@@ -19,25 +26,33 @@ jobs:
         dotnet-version: 6.0.x
     
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ env.SOLUTION_PATH }}
 
     - name: Execute unit tests
-      run: dotnet test
+      run: dotnet test ${{ env.SOLUTION_PATH }}
     
     - name: Build
-      run: dotnet build -c release --no-restore
+      run: dotnet build -c release --no-restore ${{ env.SOLUTION_PATH }}
       
+    - name: Create Zip File
+      uses: papeloto/action-zip@v1
+      with:
+        files: ${{ env.PACKAGE_PATH }}
+        dest: ${{ env.ZIP_PATH }}
+
     - name: Release
       if: ${{ endsWith(github.ref_name, '-pre') }}
       uses: softprops/action-gh-release@v0.1.15
       with:
+        tag_name: Silkworm-${{ github.ref_name }}
         prerelease: true
         body: Automated release of ${{ github.ref_name }}
-        files: Silkworm/bin/Release/net6.0/Silkworm.dll
+        files: ${{ env.ZIP_PATH }}
 
     - name: Release
       if: ${{ !endsWith(github.ref_name, '-pre') }}
       uses: softprops/action-gh-release@v0.1.15
       with:
+        tag_name: Silkworm-${{ github.ref_name }}
         body: Automated release of ${{ github.ref_name }}
-        files: Silkworm/bin/Release/net6.0/Silkworm.dll
+        files: ${{ env.ZIP_PATH }}
