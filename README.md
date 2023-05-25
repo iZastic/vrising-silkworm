@@ -15,11 +15,16 @@ Post an issue on [GitHub](https://github.com/iZastic/vrising-silkworm/issues).
 ### Known Issues
 
 ### Changelog
-`1.0.0`
-- Initial release
+`1.2.1`
+- Clamp slider values to avoid issues
 
 <details>
-<summary>History</summary>
+
+`1.2.0`
+- Updated for Gloomrot
+
+`1.1.0`
+- Added world utils
 
 `1.0.0`
 - Initial release
