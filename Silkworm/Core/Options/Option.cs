@@ -9,7 +9,7 @@ public class Option<T>
 {
     public string Id { get; internal set; }
     public string Name { get; internal set; }
-    public T Value { get; internal set; }
+    public virtual T Value { get; internal set; }
     public T DefaultValue { get; internal set; }
     public UnityEvent<T> OnChange { get; internal set; } = new();
 
@@ -24,7 +24,7 @@ public class Option<T>
         NameKey = LocalizationManager.CreateKey(name);
     }
 
-    public void SetValue(T value)
+    public virtual void SetValue(T value)
     {
         Value = value;
         OnChange?.Invoke(Value);
