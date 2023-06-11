@@ -7,8 +7,7 @@ Custom VRising library inspired by Wetstone
 - Extract _Silkworm.dll_ into _`(VRising folder)/BepInEx/plugins`_.
 
 ### Support
-
-Join the [V Rising Mod Community](https://discord.gg/r87Vdez2Br), and ping `@iZastic#0365`.
+Join the [modding discord](https://vrisingmods.com/discord) for support and tag `@iZastic#0365`
 
 Post an issue on [GitHub](https://github.com/iZastic/vrising-silkworm/issues).
 
