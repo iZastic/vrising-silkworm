@@ -14,10 +14,13 @@ Post an issue on [GitHub](https://github.com/iZastic/vrising-silkworm/issues).
 ### Known Issues
 
 ### Changelog
-`1.2.1`
-- Clamp slider values to avoid issues
+`1.2.2`
+- Updated to use BepInEx INativeDetour
 
 <details>
+
+`1.2.1`
+- Clamp slider values to avoid issues
 
 `1.2.0`
 - Updated for Gloomrot

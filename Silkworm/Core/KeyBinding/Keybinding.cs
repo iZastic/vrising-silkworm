@@ -42,13 +42,9 @@ public class Keybinding
         } while (Enum.IsDefined(typeof(InputFlag), (InputFlag)flag--));
     }
 
-    public Keybinding(string id, string name, KeyCode defaultPrimary) : this(id, name, defaultPrimary, KeyCode.None)
-    {
-    }
+    public Keybinding(string id, string name, KeyCode defaultPrimary) : this(id, name, defaultPrimary, KeyCode.None) { }
 
-    public Keybinding(string id, string name) : this(id, name, KeyCode.None)
-    {
-    }
+    public Keybinding(string id, string name) : this(id, name, KeyCode.None) { }
 
     public void AddKeyPressedListener(Action action) => OnKeyPressed.AddListener(action);
 
