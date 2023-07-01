@@ -1,10 +1,8 @@
 ﻿using BepInEx.Unity.IL2CPP.Hook;
 using HarmonyLib;
-using MonoMod.RuntimeDetour;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace Silkworm.Utils;
 

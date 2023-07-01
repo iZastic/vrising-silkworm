@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using System;
 using System.IO;
 using System.Text.Json;
 

@@ -1,6 +1,4 @@
 ﻿using Unity.Entities;
-using System.Linq;
-using System.Collections.Generic;
 using System;
 
 namespace Silkworm.Utils;
@@ -21,7 +19,7 @@ public static class WorldUtils
     {
         get
         {
-            if (_ClientWorld == null)
+            if (_ClientWorld == null || !_ClientWorld.IsCreated)
                 _ClientWorld = FindWorld(_ClientWorldName) ?? throw new Exception("Client world does not exist yet");
             return _ClientWorld;
         }
@@ -30,7 +28,7 @@ public static class WorldUtils
     {
         get
         {
-            if (_ServerWorld == null)
+            if (_ServerWorld == null || !_ServerWorld.IsCreated)
                 _ServerWorld = FindWorld(_ServerWorldName) ?? throw new Exception("Server world does not exist yet");
             return _ServerWorld;
         }
