@@ -2,47 +2,39 @@
 using Silkworm.API;
 using Stunlock.Localization;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Silkworm.Core.KeyBinding;
 
 public class KeybindingCategory
 {
     public string Name { get; internal set; }
-    public Dictionary<string, KeybindingData> Keybindings = new();
+    public Dictionary<string, Keybinding.Data> Overrides = new();
 
     internal LocalizationKey NameKey;
+    internal InputActionMap InputActionMap;
 
     internal Dictionary<string, Keybinding> KeybindingMap = new();
-    internal Dictionary<InputFlag, string> KeybindingFlags = new();
+    internal Dictionary<ButtonInputAction, string> KeybindingFlags = new();
 
     public KeybindingCategory(string name)
     {
         Name = name;
-        NameKey = LocalizationManager.CreateKey(name);
+        InputActionMap = new InputActionMap(Name);
+        NameKey = LocalizationManager.CreateKey(Name);
     }
 
-    public Keybinding AddKeyBinding(string id, string name, KeyCode defaultPrimary, KeyCode defaultSecondary)
+    public Keybinding AddKeyBinding(string name, string defaultPrimary = null, string defaultSecondary = null)
     {
-        var keybinding = new Keybinding(id, name, defaultPrimary, defaultSecondary);
-        if (Keybindings.ContainsKey(id))
+        var keybinding = new Keybinding(InputActionMap.AddAction(name), defaultPrimary, defaultSecondary);
+        if (Overrides.TryGetValue(name, out var data))
         {
-            keybinding.Primary = Keybindings[id].Primary;
-            keybinding.Secondary = Keybindings[id].Secondary;
+            if (!string.IsNullOrEmpty(data.PrimaryOverride)) keybinding.Override(true, data.PrimaryOverride);
+            if (!string.IsNullOrEmpty(data.SecondaryOverride)) keybinding.Override(false, data.SecondaryOverride);
         }
-        KeybindingMap.Add(id, keybinding);
-        KeybindingFlags.Add(keybinding.InputFlag, id);
+        KeybindingMap.Add(name, keybinding);
+        KeybindingFlags.Add(keybinding.InputFlag, name);
         return keybinding;
-    }
-
-    public Keybinding AddKeyBinding(string id, string name, KeyCode defaultPrimary)
-    {
-        return AddKeyBinding(id, name, defaultPrimary, KeyCode.None);
-    }
-
-    public Keybinding AddKeyBinding(string id, string name)
-    {
-        return AddKeyBinding(id, name, KeyCode.None);
     }
 
     public Keybinding GetKeybinding(string id)
@@ -50,7 +42,7 @@ public class KeybindingCategory
         return KeybindingMap.GetValueOrDefault(id);
     }
 
-    public Keybinding GetKeybinding(InputFlag flag)
+    public Keybinding GetKeybinding(ButtonInputAction flag)
     {
         var id = KeybindingFlags.GetValueOrDefault(flag);
         return id == null ? default : GetKeybinding(id);
@@ -61,7 +53,7 @@ public class KeybindingCategory
         return KeybindingMap.ContainsKey(id);
     }
 
-    public bool HasKeybinding(InputFlag flag)
+    public bool HasKeybinding(ButtonInputAction flag)
     {
         var id = KeybindingFlags.GetValueOrDefault(flag);
         return id != null && HasKeybinding(id);

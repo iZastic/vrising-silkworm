@@ -2,7 +2,7 @@
 
 public class ToggleOption : Option<bool>
 {
-    public ToggleOption(string id, string name, bool defaultvalue) : base(id, name, defaultvalue)
+    public ToggleOption(string name, string description, bool defaultvalue) : base(name, description, defaultvalue)
     {
     }
 }

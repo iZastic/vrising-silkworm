@@ -7,14 +7,16 @@ public class SliderOption : Option<float>
     public float MinValue { get; internal set; }
     public float MaxValue { get; internal set; }
     public override float Value { get => Mathf.Clamp(base.Value, MinValue, MaxValue); internal set => base.Value = value; }
-    public string ValueFormat { get; internal set; }
+    public int Decimals { get; internal set; }
+    public float StepValue { get; internal set; }
 
-    public SliderOption(string id, string text, float minValue, float maxValue, float defaultvalue, string valueFormat) : base(id, text, defaultvalue)
+    public SliderOption(string text, string description, float minValue, float maxValue, float defaultvalue, int decimals = default, float stepValue = default) : base(text, description, defaultvalue)
     {
         MinValue = minValue;
         MaxValue = maxValue;
         Value = Mathf.Clamp(Value, MinValue, MaxValue);
-        ValueFormat = valueFormat;
+        Decimals = decimals;
+        StepValue = stepValue;
     }
 
     public override void SetValue(float value)

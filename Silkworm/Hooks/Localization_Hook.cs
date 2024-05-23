@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
-using ProjectM;
 using Silkworm.API;
+using Stunlock.Core;
 using Stunlock.Localization;
 
 namespace Silkworm.Hooks;

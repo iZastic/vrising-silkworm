@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Silkworm.Utils;
 using Silkworm.Core.Options;
+using System;
 
 namespace Silkworm.API;
 
@@ -15,26 +16,6 @@ public static class OptionsManager
             Categories.Add(name, new OptionCategory(name));
 
         return Categories[name];
-    }
-
-    public static ToggleOption AddToggle(string category, string id, string text, bool defaultValue)
-    {
-        return AddCategory(category).AddToggle(id, text, defaultValue);
-    }
-
-    public static SliderOption AddSlider(string category, string id, string text, float minValue, float maxValue, float defaultValue)
-    {
-        return AddSlider(category, id, text, minValue, maxValue, defaultValue, LocalizationManager.Format.Default);
-    }
-
-    public static SliderOption AddSlider(string category, string id, string text, float minValue, float maxValue, float defaultValue, string format)
-    {
-        return AddCategory(category).AddSlider(id, text, minValue, maxValue, defaultValue, format);
-    }
-
-    public static DropdownOption AddDropdown(string category, string id, string name, int defaultValue, string[] values)
-    {
-        return AddCategory(category).AddDropdown(id, name, defaultValue, values);
     }
 
     public static ToggleOption GetToggle(string id)
@@ -82,11 +63,11 @@ public static class OptionsManager
             category.Dropdowns.Clear();
 
             foreach (var toggle in category.ToggleOptions.Values)
-                category.Toggles.Add(toggle.Id, toggle.Value);
+                category.Toggles.Add(toggle.Name, toggle.Value);
             foreach (var slider in category.SliderOptions.Values)
-                category.Sliders.Add(slider.Id, slider.Value);
+                category.Sliders.Add(slider.Name, slider.Value);
             foreach (var dropdown in category.DropdownOptions.Values)
-                category.Dropdowns.Add(dropdown.Id, dropdown.Values[dropdown.Value]);
+                category.Dropdowns.Add(dropdown.Name, dropdown.Values[dropdown.Value]);
 
             if (category.Toggles.Count + category.Sliders.Count + category.Dropdowns.Count == 0)
                 removeCategories.Add(category.Name);
@@ -101,7 +82,10 @@ public static class OptionsManager
     internal static void Load()
     {
         if (!FileUtils.Exists(OptionsFilename))
+        {
             Save();
+            return;
+        }
 
         var categories = FileUtils.ReadJson<Dictionary<string, OptionCategory>>(OptionsFilename);
         if (categories != null)

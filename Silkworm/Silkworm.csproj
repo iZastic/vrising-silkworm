@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Silkworm</AssemblyName>
     <Description>Custom VRising library inspired by Wetstone</Description>
-    <Version>1.2.2</Version>
+    <Version>2.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <Authors>iZastic</Authors>
@@ -13,9 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="VRising.Unhollowed.Client" Version="0.6.5.57575090" />
     <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile" />
-    <PackageReference Include="System.Text.Json" Version="6.0.7" />
+    <PackageReference Include="VRising.Unhollowed.Client" Version="1.0.2.794360001" />
+    <!--<PackageReference Include="System.Text.Json" Version="6.0.7" />-->
   </ItemGroup>
 
   <Import Project="$(MSBuildProjectDirectory)\PluginInfo.props" />

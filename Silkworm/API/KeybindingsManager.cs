@@ -2,36 +2,37 @@
 using Silkworm.Core.KeyBinding;
 using Silkworm.Utils;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Silkworm.API;
 
+/// <summary>
+/// Primary and secondary keybinds use InputControlPaths, see Unity docs for more info:
+/// https://docs.unity3d.com/Packages/com.unity.inputsystem@1.8/api/UnityEngine.InputSystem.InputControlPath.html
+/// </summary>
 public static class KeybindingsManager
 {
     internal static Dictionary<string, KeybindingCategory> Categories = new();
-    internal static string KeybindingFilename = "keybindings.json";
+    internal static string ActionsFilename = "actions.json";
 
     public static KeybindingCategory AddCategory(string name)
     {
         if (!Categories.ContainsKey(name))
-            Categories.Add(name, new KeybindingCategory(name));
+        {
+            var category = new KeybindingCategory(name);
+            Categories.Add(name, category);
+        }
 
         return Categories[name];
     }
 
-    public static Keybinding AddKeybinding(string category, string id, string name, KeyCode defaultPrimary, KeyCode defaultSecondary)
+    public static Keybinding AddKeybinding(string category, string name, string defaultPrimary = null, string defaultSecondary = null)
     {
-        return AddCategory(category).AddKeyBinding(id, name, defaultPrimary, defaultSecondary);
-    }
-
-    public static Keybinding AddKeybinding(string category, string id, string name, KeyCode defaultPrimary)
-    {
-        return AddKeybinding(category, id, name, defaultPrimary, KeyCode.None);
-    }
-
-    public static Keybinding AddKeybinding(string category, string id, string name)
-    {
-        return AddKeybinding(category, id, name, KeyCode.None);
+        return AddCategory(category).AddKeyBinding(name, defaultPrimary, defaultSecondary);
     }
 
     public static Keybinding GetKeybinding(string id)
@@ -44,7 +45,7 @@ public static class KeybindingsManager
         return default;
     }
 
-    public static Keybinding GetKeybinding(InputFlag flag)
+    public static Keybinding GetKeybinding(ButtonInputAction flag)
     {
         foreach (var category in Categories.Values)
         {
@@ -56,21 +57,21 @@ public static class KeybindingsManager
 
     public static void Save()
     {
-        FileUtils.WriteJson(KeybindingFilename, Categories);
+        FileUtils.WriteJson(ActionsFilename, Categories);
     }
 
-    internal static void FullSave()
+    public static void FullSave()
     {
         List<string> removeCategories = new();
         foreach (var category in Categories.Values)
         {
-            category.Keybindings.Clear();
+            category.Overrides.Clear();
             foreach (var keybinding in category.KeybindingMap.Values)
             {
-                category.Keybindings.Add(keybinding.Id, keybinding.Data);
+                category.Overrides.Add(keybinding.Name, keybinding.GetData());
             }
 
-            if (category.Keybindings.Count == 0)
+            if (category.Overrides.Count == 0)
                 removeCategories.Add(category.Name);
         }
 
@@ -82,10 +83,13 @@ public static class KeybindingsManager
 
     internal static void Load()
     {
-        if (!FileUtils.Exists(KeybindingFilename))
+        if (!FileUtils.Exists(ActionsFilename))
+        {
             Save();
+            return;
+        }
 
-        var categories = FileUtils.ReadJson<Dictionary<string, KeybindingCategory>>(KeybindingFilename);
+        var categories = FileUtils.ReadJson<Dictionary<string, KeybindingCategory>>(ActionsFilename);
 
         if (categories != null)
             Categories = categories;

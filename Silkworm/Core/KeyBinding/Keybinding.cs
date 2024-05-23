@@ -3,52 +3,97 @@ using Silkworm.API;
 using Silkworm.Utils;
 using Stunlock.Localization;
 using System;
-using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 namespace Silkworm.Core.KeyBinding;
 
-#nullable enable
+public delegate void KeyEvent();
+
 public class Keybinding
 {
-    public string Id { get => Data.Id; internal set => Data.Id = value; }
-    public string Name { get => Data.Name; internal set => Data.Name = value; }
-    public KeyCode Primary { get => Data.Primary; internal set => Data.Primary = value; }
-    public KeyCode Secondary { get => Data.Secondary; internal set => Data.Secondary = value; }
-    public bool IsPressed { get => Input.GetKey(Primary) || Input.GetKey(Secondary); }
-    public bool IsDown { get => Input.GetKeyDown(Primary) || Input.GetKeyDown(Secondary); }
-    public bool IsUp { get => Input.GetKeyUp(Primary) || Input.GetKeyUp(Secondary); }
-    public UnityEvent OnKeyPressed { get; internal set; } = new();
-    public UnityEvent OnKeyDown { get; internal set; } = new();
-    public UnityEvent OnKeyUp { get; internal set; } = new();
-
-    internal KeybindingData Data;
-    internal LocalizationKey NameKey;
-    internal InputFlag InputFlag;
-    internal KeyCode DefaultPrimary { get; set; }
-    internal KeyCode DefaultSecondary { get; set; }
-
-    public Keybinding(string id, string name, KeyCode defaultPrimary, KeyCode defaultSecondary)
+    public struct Data
     {
-        Data = new KeybindingData(id, name, defaultPrimary, defaultSecondary);
-        NameKey = LocalizationManager.CreateKey(name);
-        DefaultPrimary = defaultPrimary;
-        DefaultSecondary = defaultSecondary;
-
-        var flag = HashUtils.Hash64(id);
-        do
-        {
-            InputFlag = (InputFlag)flag;
-        } while (Enum.IsDefined(typeof(InputFlag), (InputFlag)flag--));
+        public string Name;
+        public string PrimaryDefault;
+        public string PrimaryOverride;
+        public string SecondaryDefault;
+        public string SecondaryOverride;
     }
 
-    public Keybinding(string id, string name, KeyCode defaultPrimary) : this(id, name, defaultPrimary, KeyCode.None) { }
+    public Il2CppSystem.Guid Id => InputAction.id;
+    public string Name { get => InputAction.name; internal set => InputAction.Rename(value); }
+    public string Primary => InputAction.bindings[0].effectivePath;
+    public string Secondary => InputAction.bindings[1].effectivePath;
+    public bool IsPressed => InputAction.IsPressed();
+    public bool IsDown => InputAction.WasPressedThisFrame();
+    public bool IsUp => InputAction.WasReleasedThisFrame();
 
-    public Keybinding(string id, string name) : this(id, name, KeyCode.None) { }
+    internal event KeyEvent KeyPressed = delegate { };
+    internal event KeyEvent KeyDown = delegate { };
+    internal event KeyEvent KeyUp = delegate { };
 
-    public void AddKeyPressedListener(Action action) => OnKeyPressed.AddListener(action);
+    internal ButtonInputAction InputFlag;
+    internal LocalizationKey NameKey;
+    internal InputAction InputAction;
+    internal string DefaultPrimary { get; set; }
+    internal string DefaultSecondary { get; set; }
 
-    public void AddKeyDownListener(Action action) => OnKeyDown.AddListener(action);
+    internal Keybinding(InputAction inputAction, string defaultPrimary = null, string defaultSecondary = null)
+    {
+        InputAction = inputAction;
+        NameKey = LocalizationManager.CreateKey(InputAction.name);
 
-    public void AddKeyUpListener(Action action) => OnKeyUp.AddListener(action);
+        InputAction.AddBinding(defaultPrimary == null ? "" : defaultPrimary);
+        DefaultPrimary = defaultPrimary == null ? "" : defaultPrimary;
+
+        InputAction.AddBinding(defaultSecondary == null ? "" : defaultSecondary);
+        DefaultSecondary = defaultSecondary == null ? "" : defaultSecondary;
+
+        var flag = HashUtils.Hash64(InputAction.actionMap.name + "." + InputAction.name);
+        do
+        {
+            InputFlag = (ButtonInputAction)flag;
+        } while (Enum.IsDefined(typeof(ButtonInputAction), (ButtonInputAction)flag--));
+    }
+
+    /// <summary>
+    /// Is called each frame the key is held down
+    /// </summary>
+    /// <param name="action"></param>
+    public void AddKeyPressedListener(KeyEvent action) => KeyPressed += action;
+
+    /// <summary>
+    /// Is called during the frame the key is pressed
+    /// </summary>
+    /// <param name="action"></param>
+    public void AddKeyDownListener(KeyEvent action) => KeyDown += action;
+
+    /// <summary>
+    /// Is called during the frame the key is released
+    /// </summary>
+    /// <param name="action"></param>
+    public void AddKeyUpListener(KeyEvent action) => KeyUp += action;
+
+    public void Override(bool primary, string path)
+    {
+        InputAction.ApplyBindingOverride(primary ? 0 : 1, path);
+    }
+
+    internal void OnKeyPressed() => KeyPressed();
+
+    internal void OnKeyDown() => KeyDown();
+
+    internal void OnKeyUp() => KeyUp();
+
+    internal Data GetData()
+    {
+        return new Data
+        {
+            Name = Name,
+            PrimaryDefault = DefaultPrimary,
+            PrimaryOverride = InputAction.bindings[0].hasOverrides ? Primary : null,
+            SecondaryDefault = DefaultSecondary,
+            SecondaryOverride = InputAction.bindings[1].hasOverrides ? Secondary : null,
+        };
+    }
 }

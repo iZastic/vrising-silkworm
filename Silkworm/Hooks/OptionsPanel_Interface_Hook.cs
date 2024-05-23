@@ -1,14 +1,12 @@
 ﻿using HarmonyLib;
-using Il2CppSystem.Collections.Generic;
 using ProjectM.UI;
 using Silkworm.API;
 using Silkworm.Core.Options;
 using StunShared.UI;
 using UnityEngine;
-using UnityEngine.Events;
-using System.Linq;
 using UnityEngine.UI;
 using TMPro;
+using Il2CppSystem;
 
 namespace Silkworm.Hooks;
 
@@ -21,8 +19,7 @@ internal static class OptionsPanel_Interface_Hook
     {
         foreach (var category in OptionsManager.Categories.Values)
         {
-            var header = UIHelper.InstantiatePrefabUnderAnchor(__instance.CategoryHeaderPrefab, __instance.ContentNode);
-            header.SetText(category.LocalizationKey);
+            __instance.AddHeader(category.LocalizationKey);
 
             foreach (var id in category.Options)
             {
@@ -31,10 +28,11 @@ internal static class OptionsPanel_Interface_Hook
                     var checkbox = UIHelper.InstantiatePrefabUnderAnchor(__instance.CheckboxPrefab, __instance.ContentNode);
                     checkbox.Initialize(
                         toggleOption.NameKey,
+                        toggleOption.DescKey,
+                        toggleOption.DefaultValue,
                         toggleOption.Value,
                         OnChange(toggleOption)
                     );
-                    toggleOption.AddListener(value => checkbox.Toggle.isOn = value);
 
                 }
                 else if (category.TryGetSlider(id, out var sliderOption))
@@ -42,34 +40,28 @@ internal static class OptionsPanel_Interface_Hook
                     var slider = UIHelper.InstantiatePrefabUnderAnchor(__instance.SliderPrefab, __instance.ContentNode);
                     slider.Initialize(
                         sliderOption.NameKey,
-                        LocalizationManager.GetFormatKey(sliderOption.ValueFormat),
+                        sliderOption.DescKey,
                         sliderOption.MinValue,
                         sliderOption.MaxValue,
+                        sliderOption.DefaultValue,
                         sliderOption.Value,
+                        sliderOption.Decimals,
+                        sliderOption.Decimals == 0,
                         OnChange(sliderOption),
-                        (Il2CppSystem.Func<float, float>)(value =>
-                        {
-                            if (sliderOption.Value < 10)
-                                return Mathf.Round(sliderOption.Value * 10f) / 10f;
-                            else if (sliderOption.Value < 0)
-                                return Mathf.Round(sliderOption.Value * 100f) / 100f;
-                            return Mathf.Round(sliderOption.Value);
-                        })
+                        fixedStepValue: sliderOption.StepValue
                     );
-                    sliderOption.AddListener(value => slider.Slider.value = value);
                 }
                 else if (category.TryGetDropdown(id, out var dropdownOption))
                 {
                     var dropdown = UIHelper.InstantiatePrefabUnderAnchor(__instance.DropdownPrefab, __instance.ContentNode);
-                    var values = new List<string>();
-                    dropdownOption.Values.ToList().ForEach(x => values.Add(x));
                     dropdown.Initialize(
                         dropdownOption.NameKey,
-                        values,
+                        dropdownOption.DescKey,
+                        dropdownOption.Values,
+                        dropdownOption.DefaultValue,
                         dropdownOption.Value,
                         OnChange(dropdownOption)
                     );
-                    dropdownOption.AddListener(value => dropdown.Dropdown.value = value);
                 }
                 else if (category.TryGetDivider(id, out var dividerText))
                 {
@@ -111,9 +103,9 @@ internal static class OptionsPanel_Interface_Hook
         return divider;
     }
 
-    private static UnityAction<T> OnChange<T>(Option<T> option)
+    private static Action<T> OnChange<T>(Option<T> option)
     {
-        return (UnityAction<T>)(value =>
+        return (Action<T>)(value =>
         {
             option.SetValue(value);
             OptionsManager.FullSave();

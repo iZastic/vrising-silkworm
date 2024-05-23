@@ -27,44 +27,39 @@ public class OptionCategory
         LocalizationKey = LocalizationManager.CreateKey(name);
     }
 
-    public ToggleOption AddToggle(string id, string name, bool defaultValue)
+    public ToggleOption AddToggle(string name, string description, bool defaultValue)
     {
-        var option = new ToggleOption(id, name, defaultValue);
-        if (Toggles.ContainsKey(id))
-            option.Value = Toggles[id];
+        var option = new ToggleOption(name, description, defaultValue);
+        if (Toggles.ContainsKey(name))
+            option.Value = Toggles[name];
 
-        ToggleOptions.Add(id, option);
-        Options.Add(option.Id);
+        ToggleOptions.Add(name, option);
+        Options.Add(option.Name);
 
         return option;
     }
 
-    public SliderOption AddSlider(string id, string name, float minValue, float maxValue, float defaultValue)
+    public SliderOption AddSlider(string name, string description, float minValue, float maxValue, float defaultValue, int decimals = default, float stepValue = default)
     {
-        return AddSlider(id, name, minValue, maxValue, defaultValue, LocalizationManager.Format.Default);
-    }
+        var option = new SliderOption(name, description, minValue, maxValue, defaultValue, decimals);
+        if (Sliders.ContainsKey(name))
+            option.Value = Mathf.Clamp(Sliders[name], minValue, maxValue);
 
-    public SliderOption AddSlider(string id, string name, float minValue, float maxValue, float defaultValue, string format)
-    {
-        var option = new SliderOption(id, name, minValue, maxValue, defaultValue, format);
-        if (Sliders.ContainsKey(id))
-            option.Value = Mathf.Clamp(Sliders[id], minValue, maxValue);
-
-        SliderOptions.Add(id, option);
-        Options.Add(option.Id);
+        SliderOptions.Add(name, option);
+        Options.Add(option.Name);
 
         return option;
     }
 
-    public DropdownOption AddDropdown(string id, string name, int defaultValue, string[] values)
+    public DropdownOption AddDropdown(string name, string description, int defaultValue, string[] values)
     {
-        var option = new DropdownOption(id, name, defaultValue, values);
-        if (Dropdowns.ContainsKey(id))
-            option.Value = Mathf.Max(0, Array.IndexOf(values, Dropdowns[id]));
+        var option = new DropdownOption(name, description, defaultValue, values);
+        if (Dropdowns.ContainsKey(name))
+            option.Value = Mathf.Max(0, Array.IndexOf(values, Dropdowns[name]));
 
 
-        DropdownOptions.Add(id, option);
-        Options.Add(option.Id);
+        DropdownOptions.Add(name, option);
+        Options.Add(option.Name);
 
         return option;
     }

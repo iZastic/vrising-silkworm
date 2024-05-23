@@ -1,34 +1,40 @@
-﻿using Silkworm.API;
+﻿using Il2CppSystem;
+using Silkworm.API;
 using Stunlock.Localization;
-using System;
-using UnityEngine.Events;
 
 namespace Silkworm.Core.Options;
 
+public delegate void OnChange<T>(T value);
+
 public class Option<T>
 {
-    public string Id { get; internal set; }
     public string Name { get; internal set; }
+    public string Description { get; internal set; }
     public virtual T Value { get; internal set; }
     public T DefaultValue { get; internal set; }
-    public UnityEvent<T> OnChange { get; internal set; } = new();
 
+    internal event OnChange<T> OnChange = delegate { };
     internal readonly LocalizationKey NameKey;
+    internal readonly Nullable_Unboxed<LocalizationKey> DescKey;
 
-    public Option(string id, string name, T defaultValue)
+    public Option(string name, string description, T defaultValue)
     {
-        Id = id;
         Name = name;
-        Value = defaultValue;
+        Description = description;
         DefaultValue = defaultValue;
+        Value = defaultValue;
         NameKey = LocalizationManager.CreateKey(name);
+        DescKey = LocalizationManager.CreateNullableKey(description);
     }
 
     public virtual void SetValue(T value)
     {
         Value = value;
-        OnChange?.Invoke(Value);
+        OnChange(Value);
     }
 
-    public void AddListener(Action<T> action) => OnChange.AddListener(action);
+    public void AddListener(OnChange<T> action)
+    {
+        OnChange += action;
+    }
 }

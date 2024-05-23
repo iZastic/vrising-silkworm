@@ -10,7 +10,6 @@ namespace Silkworm;
 public class Plugin : BasePlugin
 {
     internal static ManualLogSource Logger;
-
     private static Harmony harmony;
 
     public override void Load()
@@ -28,9 +27,12 @@ public class Plugin : BasePlugin
 
     public override bool Unload()
     {
+        Logger.LogInfo("Silkworm Unloading");
         OptionsManager.FullSave();
         KeybindingsManager.FullSave();
 
-        return true;
+        harmony.UnpatchSelf();
+
+        return false;
     }
 }

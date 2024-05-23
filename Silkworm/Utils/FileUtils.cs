@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using System;
 using System.IO;
 using System.Text.Json;
 
@@ -26,9 +27,9 @@ public static class FileUtils
             Directory.CreateDirectory(Path.Join(Paths.ConfigPath, PluginInfo.PLUGIN_NAME));
             File.WriteAllText(Path.Join(Paths.ConfigPath, PluginInfo.PLUGIN_NAME, filename), serialized);
         }
-        catch
+        catch (Exception ex)
         {
-            Plugin.Logger.LogWarning($"Error saving {filename}");
+            Plugin.Logger.LogWarning($"Error saving {filename}: {ex.Message}");
         }
     }
 
@@ -40,9 +41,9 @@ public static class FileUtils
             var deserialized = JsonSerializer.Deserialize<T>(content, jsonSerializerOptions);
             return deserialized;
         }
-        catch
+        catch (Exception ex)
         {
-            Plugin.Logger.LogWarning($"Error reading {filename}");
+            Plugin.Logger.LogWarning($"Error reading {filename}: {ex.Message}");
             return default;
         }
     }

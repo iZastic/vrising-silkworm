@@ -12,12 +12,17 @@ Join the [modding discord](https://vrisingmods.com/discord) for support and tag 
 Post an issue on [GitHub](https://github.com/iZastic/vrising-silkworm/issues).
 
 ### Known Issues
+- Conrollers not fully supported
+- Keybinds are not in the options menu
 
 ### Changelog
-`1.2.2`
-- Updated to use BepInEx INativeDetour
+`2.0.0` (**NOT** backwards compatible with 1.2.2)
+- Updated for the games 1.0 release
 
 <details>
+
+`1.2.2`
+- Updated to use BepInEx INativeDetour
 
 `1.2.1`
 - Clamp slider values to avoid issues

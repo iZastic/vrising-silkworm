@@ -1,14 +1,19 @@
-﻿using System;
+﻿using Il2CppSystem.Collections.Generic;
+using System;
 
 namespace Silkworm.Core.Options;
 
 public class DropdownOption : Option<int>
 {
-    internal string[] Values;
+    internal List<string> Values;
 
-    public DropdownOption(string id, string name, int defaultValue, string[] values) : base(id, name, defaultValue)
+    public DropdownOption(string name, string description, int defaultValue, string[] values) : base(name, description, defaultValue)
     {
-        Values = values;
+        Values = new List<string>();
+        foreach (var v in values)
+        {
+            Values.Add(v);
+        }
     }
 
     public T GetEnumValue<T>()
