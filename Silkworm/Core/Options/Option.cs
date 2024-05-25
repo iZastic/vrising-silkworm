@@ -15,7 +15,7 @@ public class Option<T>
 
     internal event OnChange<T> OnChange = delegate { };
     internal readonly LocalizationKey NameKey;
-    internal readonly Nullable_Unboxed<LocalizationKey> DescKey;
+    internal readonly LocalizationKey DescKey;
 
     public Option(string name, string description, T defaultValue)
     {
@@ -24,7 +24,7 @@ public class Option<T>
         DefaultValue = defaultValue;
         Value = defaultValue;
         NameKey = LocalizationManager.CreateKey(name);
-        DescKey = LocalizationManager.CreateNullableKey(description);
+        DescKey = LocalizationManager.CreateKey(description);
     }
 
     public virtual void SetValue(T value)

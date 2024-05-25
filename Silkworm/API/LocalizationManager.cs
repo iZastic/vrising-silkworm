@@ -40,4 +40,9 @@ public static class LocalizationManager
     {
         return guids.ContainsKey(guid);
     }
+
+    internal static bool HasKey(LocalizationKey key)
+    {
+        return guids.ContainsKey(key.GetGuid());
+    }
 }
