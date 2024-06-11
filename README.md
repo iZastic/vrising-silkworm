@@ -1,3 +1,5 @@
+***I no longer play V-Rising and will not be updating any of my mods. Feel free to fork and continue development.***
+
 # Silkworm
 
 Custom VRising library inspired by Wetstone
