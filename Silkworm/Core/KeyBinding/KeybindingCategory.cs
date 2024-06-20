@@ -55,7 +55,6 @@ public class KeybindingCategory
 
     public bool HasKeybinding(ButtonInputAction flag)
     {
-        var id = KeybindingFlags.GetValueOrDefault(flag);
-        return id != null && HasKeybinding(id);
+        return KeybindingFlags.ContainsKey(flag);
     }
 }

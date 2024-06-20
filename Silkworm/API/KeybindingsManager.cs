@@ -40,7 +40,9 @@ public static class KeybindingsManager
         foreach (var category in Categories.Values)
         {
             if (category.HasKeybinding(id))
+            {
                 return category.GetKeybinding(id);
+            }
         }
         return default;
     }
@@ -50,7 +52,9 @@ public static class KeybindingsManager
         foreach (var category in Categories.Values)
         {
             if (category.HasKeybinding(flag))
+            {
                 return category.GetKeybinding(flag);
+            }
         }
         return default;
     }
@@ -72,11 +76,15 @@ public static class KeybindingsManager
             }
 
             if (category.Overrides.Count == 0)
+            {
                 removeCategories.Add(category.Name);
+            }
         }
 
         foreach (var name in removeCategories)
+        {
             Categories.Remove(name);
+        }
 
         Save();
     }
@@ -92,6 +100,8 @@ public static class KeybindingsManager
         var categories = FileUtils.ReadJson<Dictionary<string, KeybindingCategory>>(ActionsFilename);
 
         if (categories != null)
+        {
             Categories = categories;
+        }
     }
 }

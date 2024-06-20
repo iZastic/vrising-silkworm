@@ -7,7 +7,9 @@ using Stunlock.Localization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static ProjectM.InputActionSystem;
 using static UnityEngine.InputSystem.InputAction;
+using static UnityEngine.InputSystem.InputActionRebindingExtensions;
 
 namespace Silkworm.Hooks;
 
@@ -27,7 +29,28 @@ internal static class InputActionSystem_Hook
             __instance._LoadedInputActions.AddActionMap(category.InputActionMap);
         }
         __instance._LoadedInputActions.Enable();
+
+        // TODO: Load __instance.._ControlsVisualMapping.ButtonInputActionData
+        // TODO: Load __instance._ControlsVisualMapping.AnalogInputActionData
     }
+
+    //[HarmonyPrefix]
+    //[HarmonyPatch(typeof(InputActionSystem), nameof(InputActionSystem.TryGetButtonInputActionLocalization))]
+    //private static bool TryGetButtonInputActionLocalization(ref bool __result, ButtonInputAction buttonInput, ref LocalizationKey name, ref LocalizationKey desc)
+    //{
+    //    Plugin.Logger.LogInfo(buttonInput);
+    //    var keybinding = KeybindingsManager.GetKeybinding(buttonInput);
+    //    if (keybinding == null)
+    //    {
+    //        return true;
+    //    }
+
+    //    Plugin.Logger.LogInfo(keybinding.Name);
+    //    name = keybinding.NameKey;
+    //    desc = keybinding.NameKey;
+    //    __result = true;
+    //    return false;
+    //}
 
     //[HarmonyPrefix]
     //[HarmonyPatch(typeof(InputActionSystem), nameof(InputActionSystem.GetBindingDisplayInfo))]
@@ -50,24 +73,57 @@ internal static class InputActionSystem_Hook
     //    return false;
     //}
 
-    //[HarmonyPrefix]
-    //[HarmonyPatch(typeof(InputActionSystem), nameof(InputActionSystem.InputAction))]
-    //private static bool ModifyKeyInputSetting(ButtonInputAction buttonInput, bool modifyPrimary, Action<bool> onComplete, Action<bool, bool> onCancel)
-    //{
-    //    var keybinding = KeybindingsManager.GetKeybinding(buttonInput);
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(InputActionSystem), nameof(InputActionSystem.ModifyInputActionBinding), typeof(ButtonInputAction), typeof(bool), typeof(Action<bool>), typeof(Action<bool, bool>), typeof(OnRebindCollision), typeof(Nullable_Unboxed<ControllerType>))]
+    private static void ModifyKeyInputSetting(ButtonInputAction buttonInput, bool modifyPrimary, ref Action<bool> onComplete, ref Action<bool, bool> onCancel, OnRebindCollision onCollision, Nullable_Unboxed<ControllerType> overrideControllerType)
+    {
+        Plugin.Logger.LogInfo("ModifyKeyInputSetting Primary" +
+            "\n\tButtonInput: " + buttonInput +
+            "\n\tPrimary: " + modifyPrimary +
+            "\n\tOnCollision: " + onCollision +
+            "\n\tOverrideControllerType: " + overrideControllerType
+        );
+        /*
+         * TODO: Why is this canceling immediately without a popup
+         */
+        onComplete += (Action<bool>)(b1 =>
+        {
+            Plugin.Logger.LogInfo("onComplete " + b1);
+        });
+        onCancel += (Action<bool, bool>)((b1, b2) =>
+        {
+            Plugin.Logger.LogInfo("onCancel " + b1 + ", " + b2);
+        });
 
-    //    if (keybinding == null)
-    //        return true;
+        //var keybinding = KeybindingsManager.GetKeybinding(buttonInput);
 
-    //    if (primary)
-    //        keybinding.Primary = newKey;
-    //    else
-    //        keybinding.Secondary = newKey;
+        //if (keybinding == null)
+        //{
+        //    return;
+        //}
 
-    //    KeybindingsManager.FullSave();
+        //keybinding.InputAction
+        //    .PerformInteractiveRebinding()
+        //    .WithTargetBinding(0)
+        //    .OnComplete((Action<RebindingOperation>)(operation =>
+        //    {
 
-    //    return false;
-    //}
+        //    }))
+        //    .OnCancel((Action<RebindingOperation>)(operation =>
+        //    {
+
+        //    }))
+        //    .Start();
+
+        //if (primary)
+        //    keybinding.Primary = newKey;
+        //else
+        //    keybinding.Secondary = newKey;
+
+        //KeybindingsManager.FullSave();
+
+        //return false;
+    }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(InputActionSystem), nameof(InputActionSystem.OnUpdate))]

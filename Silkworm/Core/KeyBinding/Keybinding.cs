@@ -20,7 +20,6 @@ public class Keybinding
         public string SecondaryOverride;
     }
 
-    public Il2CppSystem.Guid Id => InputAction.id;
     public string Name { get => InputAction.name; internal set => InputAction.Rename(value); }
     public string Primary => InputAction.bindings[0].effectivePath;
     public string Secondary => InputAction.bindings[1].effectivePath;
@@ -37,6 +36,8 @@ public class Keybinding
     internal InputAction InputAction;
     internal string DefaultPrimary { get; set; }
     internal string DefaultSecondary { get; set; }
+    internal string PrimaryName => InputAction.bindings[0].ToDisplayString();
+    internal string SecondaryName => InputAction.bindings[1].ToDisplayString();
 
     internal Keybinding(InputAction inputAction, string defaultPrimary = null, string defaultSecondary = null)
     {
